@@ -1,0 +1,297 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="roomba">
+
+  <!-- Set this variable to True to setup for use with Gazebo simulation. -->
+  <xacro:arg name="gazebo" default="True" />
+
+  <!-- Import and add robot components -->
+  <xacro:include filename="$(find krytn)/robot_description/magni/inertial.xacro" />
+  <xacro:include filename="$(find realsense2_description)/urdf/_d435i.urdf.xacro" />
+  <!-- -->
+  <link name="body_link">
+    <visual>
+      <!--robot_body/Body003.-->
+      <origin rpy="0.0 -0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="file://$(find roomba)/robot_description/roomba/meshes/roomba_robot_body_visual.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!--robot_body/Body003.-->
+      <origin rpy="0.0 -0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="file://$(find roomba)/robot_description/roomba/meshes/roomba_robot_body_body.dae"/>
+      </geometry>
+    </collision>
+    <xacro:cylinder_inertial radius="0.3" length="0.08" mass="1" />
+  </link>
+  <link name="right_wheel_link">
+    <visual>
+      <!--wheel/Body004.-->
+      <origin rpy="0.0 -0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="file://$(find roomba)/robot_description/roomba/meshes/roomba_wheel_body_visual.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!--wheel_collision/Body001.-->
+      <origin rpy="0.0 -0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="file://$(find roomba)/robot_description/roomba/meshes/roomba_wheel_body.dae"/>
+      </geometry>
+    </collision>
+    <xacro:cylinder_inertial radius="0.036" length="0.015" mass="0.1" />
+  </link>
+  <link name="left_wheel_link">
+    <visual>
+      <!--wheel/Body004.-->
+      <origin rpy="0.0 -0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="file://$(find roomba)/robot_description/roomba/meshes/roomba_wheel_body_visual.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!--wheel_collision/Body001.-->
+      <origin rpy="0.0 -0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="file://$(find roomba)/robot_description/roomba/meshes/roomba_wheel_body.dae"/>
+      </geometry>
+    </collision>
+    <xacro:cylinder_inertial radius="0.036" length="0.015" mass="0.1" />
+  </link>
+  <link name="caster_wheel_link">
+    <visual>
+      <!--caster_wheel/Body005.-->
+      <origin rpy="0.0 -0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="file://$(find roomba)/robot_description/roomba/meshes/roomba_caster_wheel_visual.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!--caster_wheel_body-->
+      <origin rpy="0.0 -0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="file://$(find roomba)/robot_description/roomba/meshes/roomba_caster_wheel_body.dae"/>
+      </geometry>
+    </collision>
+    <xacro:cylinder_inertial radius="0.013" length="0.021" mass="0.05" />
+  </link>
+  <joint name="right_wheel_joint" type="continuous">
+    <parent link="body_link"/>
+    <child link="left_wheel_link"/>
+    <origin rpy="0.0 -0.0 0.0" xyz="0.0 -0.1175 0.0245"/>
+    <axis xyz="0.0 1.0 0.0" />
+  </joint>
+  <joint name="left_wheel_joint" type="continuous">
+    <parent link="body_link"/>
+    <child link="right_wheel_link"/>
+    <origin rpy="0.0 -0.0 0.0" xyz="0.0 0.1175 0.0245"/>
+    <axis xyz="0.0 1.0 0.0" />
+  </joint>
+  <joint name="caster_wheel_joint" type="fixed">
+    <parent link="body_link"/>
+    <child link="caster_wheel_link"/>
+    <origin rpy="0.0 -0.0 0.0" xyz="0.127 0.0 0.0015"/>
+    <axis xyz="0.0 1.0 0.0" />
+  </joint>
+  <!-- Including realsense description from external package -->
+  <!-- <xacro:sensor_d435i parent="body_link" name="sensor_d435i" use_nominal_extrinsics="$(arg gazebo)">
+    <origin xyz="0.0 0 0.08" rpy="0 0 0"/>
+  </xacro:sensor_d435i> -->
+
+  <!-- Adding a simple rplidar for collision avoidance.  -->
+  <link name="rplidar">
+    <xacro:cylinder_inertial_with_origin radius="0.02" length="0.35" mass="0.13">
+      <origin xyz="0 0 0.03" rpy="0 ${pi/2} 0" />
+    </xacro:cylinder_inertial_with_origin>
+
+    <collision name="collision_base">
+      <pose>0 0 0.0175015175 0 0 0</pose>
+      <geometry>
+        <box size="0.05001062 0.05001062 0.035003035"/>
+      </geometry>
+    </collision>
+    <collision name="collision_top">
+      <pose>0 0 0.0525045525 0 0 0</pose>
+      <geometry>
+        <cylinder radius="0.02" length="0.035003035" />
+      </geometry>
+    </collision>
+    <visual name="visual">
+      <pose>0 0 0 0 0 1.5707</pose>
+      <geometry>
+        <mesh filename="file://$(find krytn)/robot_description/krytn/meshes/lidar_2d_v1.dae"/>
+      </geometry>
+    </visual>
+  </link>
+  <joint name="rplidar_joint" type="fixed">
+    <parent link="body_link"/>
+    <child link="rplidar"/>
+    <origin xyz="0.0 0.0 0.067" rpy="0 0 0"/>
+  </joint>
+
+
+  <!-- Configure Control of Joints -->
+  <ros2_control name="magni" type="system">
+
+    <xacro:if value="${$(arg gazebo) == True}">
+      <hardware>
+        <plugin>ign_ros2_control/IgnitionSystem</plugin>
+      </hardware>
+    </xacro:if>
+
+    <xacro:if value="${not $(arg gazebo)}">
+      <hardware>
+        <plugin>ubiquity_motor/UbiquityMotorSystemHardware</plugin>
+        <param name="serial_port">/dev/serial0</param>
+        <param name="baud_rate">38400</param>
+        <param name="left_wheel_joint_name">left_wheel_joint</param>
+        <param name="right_wheel_joint_name">right_wheel_joint</param>
+      </hardware>
+      <gpio name="magni_IOs">
+        <state_interface name="battery_voltage"/>
+      </gpio>
+    </xacro:if>
+
+    <joint name="left_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-10</param>
+        <param name="max">10</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort" />
+    </joint>
+
+    <joint name="right_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-10</param>
+        <param name="max">10</param>
+      </command_interface>
+
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort" />
+    </joint>
+  </ros2_control>
+
+  <!-- Setup Gazebo plugins -->
+  <xacro:if value="$(arg gazebo)">
+    <gazebo>
+      <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+        <controller_manager_prefix_node_name>/roomba</controller_manager_prefix_node_name>
+        <ros>
+          <remapping>diff_drive_base_controller/odometry:=odom</remapping>
+          <remapping>diff_drive_base_controller/tf_odometry:=tf</remapping>
+          <remapping>diff_drive_base_controller/cmd_vel_unstamped:=cmd_vel</remapping>
+          <namespace>/roomba</namespace>
+        </ros>
+        <parameters>$(find roomba)/config/diffdrive_control.yaml</parameters>
+      </plugin>
+
+      <plugin filename="ignition-gazebo-imu-system" name="gz::sim::systems::Imu">
+      </plugin>
+
+      <plugin filename="ignition-gazebo-sensors-system" name="ignition::gazebo::systems::Sensors">
+        <render_engine>ogre2</render_engine>
+      </plugin>
+    </gazebo>
+
+    <!-- Add sensor tags to Realsense links -->
+    <!-- <gazebo reference="sensor_d435i_link">
+      <sensor name="realsense_d435" type="rgbd_camera">
+        <topic>realsense</topic>
+        <ignition_frame_id>sensor_d435i_link</ignition_frame_id>
+        <update_rate>5</update_rate>
+        <camera name="camera">
+          <horizontal_fov>${86/180}</horizontal_fov>
+          <lens>
+            <intrinsics>-->
+    <!-- fx = fy = width / ( 2 * tan (hfov / 2 ) ) -->
+    <!-- <fx>554.25469</fx>
+              <fy>554.25469</fy> -->
+    <!-- cx = ( width + 1 ) / 2 -->
+    <!-- <cx>320.5</cx> -->
+    <!-- cy = ( height + 1 ) / 2 -->
+    <!--<cy>240.5</cy>
+              <s>0</s>
+            </intrinsics>
+          </lens>
+          <distortion>
+            <k1>0.0</k1>
+            <k2>0.0</k2>
+            <k3>0.0</k3>
+            <p1>0.0</p1>
+            <p2>0.0</p2>
+            <center>0.5 0.5</center>
+          </distortion>
+          <image>
+            <width>160</width>
+            <height>120</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.01</near>
+            <far>10</far>
+          </clip>
+          <depth_camera>
+            <clip>
+              <near>0.1</near>
+              <far>10</far>
+            </clip>
+          </depth_camera>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+      </sensor>
+    </gazebo> -->
+
+    <gazebo reference="sensor_d435i_accel_frame">
+      <sensor name="imu" type="imu">
+        <always_on>1</always_on>
+        <update_rate>100</update_rate>
+        <visualize>true</visualize>
+        <topic>imu</topic>
+        <enable_metrics>true</enable_metrics>
+      </sensor>
+    </gazebo>
+
+    <!-- Add sensor tag to Lidar -->
+    <gazebo reference="rplidar">
+      <sensor name="lidar_2d_v1" type="gpu_ray">
+        <topic>lidar</topic>
+        <ignition_frame_id>rplidar</ignition_frame_id>
+        <pose>0 0 0.0525045525 0 0 0</pose>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>180</samples>
+              <resolution>1</resolution>
+              <min_angle>${-pi}</min_angle>
+              <max_angle>${pi}</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.06</min>
+            <max>5</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.001</stddev>
+          </noise>
+        </ray>
+        <always_on>0</always_on>
+        <update_rate>20</update_rate>
+        <visualize>false</visualize>
+      </sensor>
+    </gazebo>
+
+
+  </xacro:if>
+
+</robot>
