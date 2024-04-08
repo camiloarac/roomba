@@ -1,6 +1,5 @@
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_param_builder import load_xacro
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
@@ -17,10 +16,6 @@ def generate_launch_description():
     
     gazebo_sim = IncludeLaunchDescription(path,
                                           launch_arguments=[("gz_args", '-r ' + cafe_world_uri)])
-    # This allows us to use the rviz_config variable in substitutions in this launch description.
-    rviz_config = LaunchConfiguration('rviz_config', default="general.rviz")
-
-    base_path = get_package_share_directory("roomba")
 
     # Create a robot in the world.
     # Steps: 
@@ -90,15 +85,6 @@ def generate_launch_description():
                 output="screen",
             )
     
-    rviz = Node(
-        package='rviz2',
-        executable='rviz2',
-        arguments=[
-            '-d',
-            PathJoinSubstitution([base_path, 'config', rviz_config])
-        ])
-    
-
     return LaunchDescription([gazebo_sim, bridge, static_pub, robot,
                               robot_steering, robot_state_publisher,
-                              start_controllers, rviz])
+                              start_controllers])
