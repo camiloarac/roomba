@@ -159,7 +159,8 @@ local_costmap:
       width: 3
       height: 3
       resolution: 0.05
-      footprint: "[[0.13, 0.24], [0.13, -0.24], [-0.37, -0.24], [-0.37, 0.24]]"
+      robot_radius: 0.16
+      # footprint: "[[0.13, 0.24], [0.13, -0.24], [-0.37, -0.24], [-0.37, 0.24]]"
       plugins: ["voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -198,7 +199,7 @@ global_costmap:
       global_frame: map
       robot_base_frame: roomba/body_link
       use_sim_time: True
-      robot_radius: 0.3
+      robot_radius: 0.16
       resolution: 0.05
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
