@@ -78,13 +78,13 @@
   </link>
   <joint name="right_wheel_joint" type="continuous">
     <parent link="body_link"/>
-    <child link="left_wheel_link"/>
+    <child link="right_wheel_link"/>
     <origin rpy="0.0 -0.0 0.0" xyz="0.0 -0.1175 0.0245"/>
     <axis xyz="0.0 1.0 0.0" />
   </joint>
   <joint name="left_wheel_joint" type="continuous">
     <parent link="body_link"/>
-    <child link="right_wheel_link"/>
+    <child link="left_wheel_link"/>
     <origin rpy="0.0 -0.0 0.0" xyz="0.0 0.1175 0.0245"/>
     <axis xyz="0.0 1.0 0.0" />
   </joint>
@@ -129,6 +129,28 @@
     <child link="rplidar"/>
     <origin xyz="0.0 0.0 0.067" rpy="0 0 0"/>
   </joint>
+  <!-- Add an IMU for nav2-->
+  <!-- <link name="imu_link">
+    <visual>
+      <geometry>
+        <box size="0.04 0.04 0.01"/>
+      </geometry>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="0.04 0.04 0.01"/>
+      </geometry>
+    </collision>
+
+    <xacro:box_inertial mass="0.1" x="0.04" y="0.04" z="0.01"/>
+  </link>
+
+  <joint name="imu_joint" type="fixed">
+    <parent link="body_link"/>
+    <child link="imu_link"/>
+    <origin xyz="0 0 0.1"/>
+  </joint> -->
 
 
   <!-- Configure Control of Joints -->
@@ -249,7 +271,7 @@
       </sensor>
     </gazebo> -->
 
-    <gazebo reference="sensor_d435i_accel_frame">
+    <!-- <gazebo reference="imu_link">
       <sensor name="imu" type="imu">
         <always_on>1</always_on>
         <update_rate>100</update_rate>
@@ -257,7 +279,7 @@
         <topic>imu</topic>
         <enable_metrics>true</enable_metrics>
       </sensor>
-    </gazebo>
+    </gazebo> -->
 
     <!-- Add sensor tag to Lidar -->
     <gazebo reference="rplidar">
