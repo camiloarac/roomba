@@ -10,8 +10,12 @@ from os.path import join
 
 
 def generate_launch_description():
+    # This allows us to have the rviz_config as an argument on the command line
+    rviz_config_arg =  DeclareLaunchArgument(
+        'rviz_config', default_value="view.yaml"
+    )
     # This allows us to use the rviz_config variable in substitutions in this launch description.
-    rviz_config = LaunchConfiguration('rviz_config', default="general.rviz")
+    rviz_config = LaunchConfiguration('rviz_config', default="view.rviz")
 
     base_path = get_package_share_directory("roomba")
     # Include the gazebo setup
@@ -35,4 +39,6 @@ def generate_launch_description():
         ]
     )
 
-    return LaunchDescription([gazebo, slam_toolbox, rviz]) 
+    return LaunchDescription([gazebo, slam_toolbox, 
+                                rviz, 
+                                rviz_config_arg])

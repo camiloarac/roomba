@@ -11,9 +11,8 @@ def generate_launch_description():
 
     # Start a simulation with the cafe world
     cafe_world_uri = join(get_package_share_directory("krytn"), "models", "gamecity_world.sdf")
-    # cafe_world_uri = "empty.sdf"
     path = join(get_package_share_directory("ros_gz_sim"), "launch", "gz_sim.launch.py")
-    
+    # cafe_world_uri = "empty.sdf"
     gazebo_sim = IncludeLaunchDescription(path,
                                           launch_arguments=[("gz_args", '-r ' + cafe_world_uri)])
 
@@ -57,9 +56,9 @@ def generate_launch_description():
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
                    '/lidar@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
                    '/lidar/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked',
-                #    '/realsense/image@sensor_msgs/msg/Image[gz.msgs.Image',
-                #    '/realsense/depth@sensor_msgs/msg/Image[gz.msgs.Image',
-                #    '/realsense/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked',
+                   '/realsense/image@sensor_msgs/msg/Image[gz.msgs.Image',
+                   '/realsense/depth@sensor_msgs/msg/Image[gz.msgs.Image',
+                   '/realsense/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked',
                    '/imu@sensor_msgs/msg/Imu[ignition.msgs.IMU'
                    ],
         output='screen'
@@ -85,6 +84,9 @@ def generate_launch_description():
                 output="screen",
             )
     
-    return LaunchDescription([gazebo_sim, bridge, static_pub, robot,
+
+    
+
+    return LaunchDescription([gazebo_sim, bridge, static_pub, robot, 
                               robot_steering, robot_state_publisher,
                               start_controllers])
